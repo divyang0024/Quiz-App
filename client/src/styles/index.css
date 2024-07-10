@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .active {
+    @apply rounded-xl bg-[#F97300] font-bold text-[#E2DFD0] text-xl;
+  }
+}
