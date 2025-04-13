@@ -14,10 +14,13 @@ function Home() {
 
   const startQuiz = async (e) => {
     e.preventDefault();
-    const result = await axios.post("http://localhost:3000/user/verifyUser", {
-      password: password.current?.value,
-      email: email.current?.value,
-    });
+    const result = await axios.post(
+      "https://quiz-app-98y5-git-main-divyang0024s-projects.vercel.app/user/verifyUser",
+      {
+        password: password.current?.value,
+        email: email.current?.value,
+      }
+    );
     if (result.data.msg === true) {
       console.log(result.data);
       dispatch(setUserId(result.data.email));

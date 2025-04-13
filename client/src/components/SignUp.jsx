@@ -49,7 +49,7 @@ function SignUp() {
                 // Login mode
                 try {
                   const res = await axios.post(
-                    "http://localhost:3000/user/verifyUser",
+                    "https://quiz-app-98y5-git-main-divyang0024s-projects.vercel.app/user/verifyUser",
                     { email, password }
                   );
                   if (res.data.msg) {
@@ -69,7 +69,7 @@ function SignUp() {
               } else {
                 // Signup mode
                 const response = await axios.post(
-                  "http://localhost:3000/user/getUsers",
+                  "https://quiz-app-98y5-git-main-divyang0024s-projects.vercel.app/user/getUsers",
                   { email }
                 );
                 if (response.data.msg) {
@@ -77,11 +77,14 @@ function SignUp() {
                   setTimeout(() => setFormError(false), 2000);
                 } else {
                   await axios
-                    .post("http://localhost:3000/user/registerUser", {
-                      name,
-                      email,
-                      password,
-                    })
+                    .post(
+                      "https://quiz-app-98y5-git-main-divyang0024s-projects.vercel.app/user/registerUser",
+                      {
+                        name,
+                        email,
+                        password,
+                      }
+                    )
                     .then(async (data) => {
                       try {
                         const token = await generateToken({

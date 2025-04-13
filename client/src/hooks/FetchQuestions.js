@@ -19,7 +19,7 @@ export const useFetchQuestion = () => {
       try {
         // const questions = await data;
         const q = await getServerData(
-          "http://localhost:3000/api/questions"
+          "https://quiz-app-98y5-git-main-divyang0024s-projects.vercel.app/api/questions"
         ).then((data) => {
           return data;
         });

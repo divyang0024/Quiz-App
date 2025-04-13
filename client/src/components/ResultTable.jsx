@@ -10,7 +10,9 @@ function ResultTable() {
       user = await verifyToken();
       console.log(user);
     })();
-    getServerData("http://localhost:3000/api/result").then((result) => {
+    getServerData(
+      "https://quiz-app-98y5-git-main-divyang0024s-projects.vercel.app/api/result"
+    ).then((result) => {
       setData(result.msg);
     });
   }, []);

@@ -47,7 +47,7 @@ function PassFailChart() {
     const fetchData = async () => {
       try {
         const res = await axios.post(
-          "http://localhost:3000/user/getUserResults",
+          "https://quiz-app-98y5-git-main-divyang0024s-projects.vercel.app/user/getUserResults",
           {
             username: userId,
           }

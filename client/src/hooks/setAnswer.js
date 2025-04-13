@@ -22,7 +22,7 @@ export const usePublishResult = (resultData) => {
     try {
       if (result != [] && !username) throw new Error("couldn't get result");
       await postServerData(
-        "http://localhost:3000/api/result",
+        "https://quiz-app-98y5-git-main-divyang0024s-projects.vercel.app/api/result",
         resultData,
         (data) => data
       );
