@@ -5,7 +5,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { setUserId } from "../redux/resultReducer";
 
 function Home() {
- 
   const email = useRef(null);
   const password = useRef(null);
 
@@ -20,7 +19,8 @@ function Home() {
       email: email.current?.value,
     });
     if (result.data.msg === true) {
-      dispatch(setUserId(result.data.name));
+      console.log(result.data);
+      dispatch(setUserId(result.data.email));
       redirectQuiz("/quiz", { replace: true });
     } else {
       setFormError(true);

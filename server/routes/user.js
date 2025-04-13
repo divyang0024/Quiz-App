@@ -1,6 +1,11 @@
 import express from "express";
 
-import { registerUser, verifyUser, getUsers } from "../controllers/user.js";
+import {
+  registerUser,
+  verifyUser,
+  getUsers,
+  getUserResults,
+} from "../controllers/user.js";
 
 const userRouter = express.Router();
 
@@ -15,5 +20,9 @@ userRouter
 userRouter
   .use(express.urlencoded({ extended: true }))
   .post("/registerUser", registerUser);
+
+userRouter
+  .use(express.urlencoded({ extended: true }))
+  .post("/getUserResults", getUserResults);
 
 export { userRouter };

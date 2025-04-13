@@ -7,6 +7,7 @@ import Quiz from "./Quiz";
 import Result from "./Result";
 import SignUp from "./SignUp";
 import ResultTable from "./ResultTable.jsx";
+import PassFailChart from "./PassFailChart.jsx";
 
 //routes
 const router = createBrowserRouter([
@@ -31,8 +32,8 @@ const router = createBrowserRouter([
     element: <Result />,
   },
   {
-    path: "/logs",
-    element: <ResultTable />,
+    path: "/stats",
+    element: <PassFailChart />,
   },
 ]);
 

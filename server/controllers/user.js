@@ -1,9 +1,14 @@
 import { User } from "../models/userSchema.js";
+import { Results } from "../models/resultSchema.js";
 import { generateHash, verifyHash } from "../service/user.js";
+import jwt from "jsonwebtoken";
 
 const verifyUser = async (req, res) => {
   const { email, password } = req.body;
-  const data = await User.find({ email: email }, { password: 1, name: 1 })
+  const data = await User.find(
+    { email: email },
+    { password: 1, name: 1, email: 1 }
+  )
     .then((data) => data)
     .catch((err) => console.log(err));
   const hash = data[0] === undefined ? "" : data[0].password;
@@ -12,6 +17,7 @@ const verifyUser = async (req, res) => {
     res.json({
       msg: true,
       name: data[0].name,
+      email: data[0].email,
     });
   } else {
     res.json({
@@ -61,4 +67,15 @@ const getUsers = async (req, res) => {
   }
 };
 
-export { verifyUser, registerUser, getUsers };
+const getUserResults = async (req, res) => {
+  const { username } = req.body;
+  try {
+    const results = await Results.find({ username });
+    res.json(results);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error fetching user results" });
+  }
+};
+
+export { verifyUser, registerUser, getUsers, getUserResults };

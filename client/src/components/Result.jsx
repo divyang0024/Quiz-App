@@ -1,22 +1,21 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { resetAllAction } from "../redux/questionReducer";
 import { resetResultAction } from "../redux/resultReducer";
 import { attemptsNumber, earnPointsNumber, flagResult } from "../helper/helper";
 import { usePublishResult } from "../hooks/setAnswer";
+import PassFailChart from "./PassFailChart";
 
 function Result() {
   const dispatch = useDispatch();
+  const [showResult, setShowResult] = useState(true);
+  const [resultPosted, setResultPosted] = useState(false); // Track if result is posted
 
   const {
     questions: { queue, answers },
     result: { result, userId },
   } = useSelector((state) => state);
-
-  useEffect(() => {
-    // console.log();
-  });
 
   const totalPoints = queue.length * 10;
   const attempts = attemptsNumber(result);
@@ -33,88 +32,99 @@ function Result() {
   });
   const earnPoints = earnPointsNumber(result, answer);
   const flag = flagResult(totalPoints, earnPoints);
-  // console.log(result, attempts, earnPoints, flag);
-  usePublishResult({
-    result,
-    username: userId,
-    attempts,
-    points: earnPoints,
-    achived: flag ? "passed" : "failed",
-  });
+
+  useEffect(() => {
+    // Ensure result is only posted once
+    if (!resultPosted && result && userId) {
+      usePublishResult({
+        result,
+        username: userId,
+        attempts,
+        points: earnPoints,
+        achived: flag ? "passed" : "failed",
+      });
+      setResultPosted(true); // Mark as posted
+    }
+  }, [result, userId, resultPosted, attempts, earnPoints, flag]);
 
   const onRestart = () => {
     dispatch(resetAllAction());
     dispatch(resetResultAction());
+    setResultPosted(false); // Reset the result posted flag on restart
+  };
+
+  const toggleView = () => {
+    setShowResult(!showResult);
   };
 
   return (
-    <>
-      <div className="flex justify-center items-center min-h-screen bg-[#32012F]">
-        <div className="flex rounded-r-2xl  p-8 bg-[#E2DFD0] rounded-l-xl flex-col gap-6 min-w-[30%] max-w-lg ">
-          <h1 className=" text-center text-[#F97300] text-4xl font-semibold">
-            Quiz Application
-          </h1>
-          <div className="flex flex-col gap-4 border-2 border-[#F97300] rounded-lg p-4">
-            <div className="flex justify-between">
-              <span>Username : </span>
-              <span className="text-[#F97300] font-bold">{userId}</span>
-            </div>
-            <hr className="border-[#F97300]" />
-            <div className="flex justify-between">
-              <span>Total Quiz Points : </span>
-              <span className="text-[#F97300] font-bold">{totalPoints}</span>
-            </div>
-            <hr className="border-[#F97300]" />
+    <div className="min-h-screen bg-[#32012F] flex items-center justify-center p-4">
+      <div className="bg-[#E2DFD0] w-full max-w-4xl p-8 rounded-xl shadow-lg border-2 border-[#F97300] transform transition duration-300 hover:shadow-xl">
+        <h1 className="text-center text-3xl font-bold text-[#F97300] mb-8">
+          Quiz Application
+        </h1>
 
-            <div className="flex justify-between">
-              <span>Total Questions : </span>
-              <span className="text-[#F97300] font-bold">{queue.length}</span>
-            </div>
-            <hr className="border-[#F97300]" />
+        <div className="flex justify-center mb-6">
+          <button
+            onClick={toggleView}
+            className="bg-[#F97300] text-[#E2DFD0] font-semibold px-8 py-3 rounded-lg hover:bg-[#E2DFD0] hover:text-[#F97300] hover:border-2 hover:border-[#F97300] transition duration-300"
+          >
+            {showResult ? "View Stats" : "View Result"}
+          </button>
+        </div>
 
-            <div className="flex justify-between">
-              <span>Total Attempts : </span>
-              <span className="text-[#F97300] font-bold">{attempts}</span>
+        {showResult ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-[#32012F] font-medium">
+            <div className="flex justify-between items-center p-4 rounded-lg border-2 border-[#F97300]">
+              <span>Email:</span>
+              <span className="font-bold text-[#F97300]">{userId}</span>
             </div>
-            <hr className="border-[#F97300]" />
-
-            <div className="flex justify-between">
-              <span>Total Earn Points : </span>
+            <div className="flex justify-between items-center p-4 rounded-lg border-2 border-[#F97300]">
+              <span>Total Quiz Points:</span>
+              <span className="font-bold text-[#F97300]">{totalPoints}</span>
+            </div>
+            <div className="flex justify-between items-center p-4 rounded-lg border-2 border-[#F97300]">
+              <span>Total Questions:</span>
+              <span className="font-bold text-[#F97300]">{queue.length}</span>
+            </div>
+            <div className="flex justify-between items-center p-4 rounded-lg border-2 border-[#F97300]">
+              <span>Total Attempts:</span>
+              <span className="font-bold text-[#F97300]">{attempts}</span>
+            </div>
+            <div className="flex justify-between items-center p-4 rounded-lg border-2 border-[#F97300]">
+              <span>Total Earned Points:</span>
+              <span className="font-bold text-[#F97300]">{earnPoints}</span>
+            </div>
+            <div className="col-span-1 sm:col-span-2 lg:col-span-3 flex justify-between items-center p-4 rounded-lg border-2 border-[#F97300]">
+              <span className="text-lg">Quiz Result:</span>
               <span
-                className={`font-bold ${
-                  flag ? "text-[#32CD32]" : "text-[#DC143C]"
-                }`}
-              >
-                {earnPoints}
-              </span>
-            </div>
-            <hr className="border-2 border-[#F97300]" />
-            <div className="flex justify-between">
-              <span>Quiz Result : </span>
-              <span
-                className={`text-2xl ${
+                className={`text-xl font-bold p-3 border-2 border-dashed rounded-lg ${
                   flag
-                    ? "text-[#32CD32] font-bold border-dashed border-2 p-2 border-[#32CD32]"
-                    : "text-[#DC143C] font-bold border-dashed border-2 p-2 border-[#DC143C]"
+                    ? "text-[#32CD32] border-[#32CD32]"
+                    : "text-[#DC143C] border-[#DC143C]"
                 }`}
               >
                 {flag ? "PASSED" : "FAILED"}
               </span>
             </div>
-            <div className="flex gap-4">
-              <div className="bg-[#F97300] border-2 border-transparent font-semibold text-[#E2DFD0] px-16 py-2 rounded-lg self-center hover:border-[#F97300] hover:bg-[#E2DFD0] hover:text-[#F97300] duration-300">
-                <Link to="/" onClick={onRestart}>
+            <div className="col-span-1 sm:col-span-2 lg:col-span-3 flex justify-center mt-6">
+              <Link to="/">
+                <button
+                  onClick={onRestart}
+                  className="bg-[#F97300] text-[#E2DFD0] font-semibold px-10 py-3 rounded-lg hover:bg-[#E2DFD0] hover:text-[#F97300] hover:border-2 hover:border-[#F97300] transition duration-300"
+                >
                   Restart
-                </Link>
-              </div>
-              <div className="bg-[#F97300] border-2 border-transparent font-semibold text-[#E2DFD0] px-16 py-2 rounded-lg self-center hover:border-[#F97300] hover:bg-[#E2DFD0] hover:text-[#F97300] duration-300">
-                <Link to="/logs">Global logs</Link>
-              </div>
+                </button>
+              </Link>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="mt-6">
+            <PassFailChart />
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 }
 
