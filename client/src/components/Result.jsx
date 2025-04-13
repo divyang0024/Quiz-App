@@ -6,6 +6,7 @@ import { resetResultAction } from "../redux/resultReducer";
 import { attemptsNumber, earnPointsNumber, flagResult } from "../helper/helper";
 import { usePublishResult } from "../hooks/setAnswer";
 import PassFailChart from "./PassFailChart";
+import dvquizapp from "../../dvquizapp.png"; // Updated image path
 
 function Result() {
   const dispatch = useDispatch();
@@ -60,17 +61,16 @@ function Result() {
   return (
     <div className="min-h-screen bg-[#32012F] flex items-center justify-center p-4">
       <div className="bg-[#E2DFD0] w-full max-w-4xl p-8 rounded-xl shadow-lg border-2 border-[#F97300] transform transition duration-300 hover:shadow-xl">
-        <h1 className="text-center text-3xl font-bold text-[#F97300] mb-8">
-          Quiz Application
-        </h1>
-
-        <div className="flex justify-center mb-6">
-          <button
-            onClick={toggleView}
-            className="bg-[#F97300] text-[#E2DFD0] font-semibold px-8 py-3 rounded-lg hover:bg-[#E2DFD0] hover:text-[#F97300] hover:border-2 hover:border-[#F97300] transition duration-300"
-          >
-            {showResult ? "View Stats" : "View Result"}
-          </button>
+        {/* Logo and Heading Section */}
+        <div className="flex items-center gap-2 mb-8">
+          <img
+            src={dvquizapp}
+            alt="DV Quiz App Logo"
+            className="w-16 sm:w-20 md:w-24 h-auto rounded-full border-2 border-[#F97300]"
+          />
+          <h1 className="text-[#F97300] font-bold text-3xl sm:text-4xl">
+            Quiz Application
+          </h1>
         </div>
 
         {showResult ? (
@@ -107,22 +107,30 @@ function Result() {
                 {flag ? "PASSED" : "FAILED"}
               </span>
             </div>
-            <div className="col-span-1 sm:col-span-2 lg:col-span-3 flex justify-center mt-6">
-              <Link to="/">
-                <button
-                  onClick={onRestart}
-                  className="bg-[#F97300] text-[#E2DFD0] font-semibold px-10 py-3 rounded-lg hover:bg-[#E2DFD0] hover:text-[#F97300] hover:border-2 hover:border-[#F97300] transition duration-300"
-                >
-                  Restart
-                </button>
-              </Link>
-            </div>
           </div>
         ) : (
           <div className="mt-6">
             <PassFailChart />
           </div>
         )}
+
+        {/* View and Restart Buttons in Column on Small Viewports */}
+        <div className="flex flex-col sm:flex-row justify-center mt-6 gap-4">
+          <button
+            onClick={toggleView}
+            className="bg-[#F97300] text-[#E2DFD0] font-semibold px-6 py-2 rounded-lg hover:bg-[#E2DFD0] hover:text-[#F97300] hover:border-2 hover:border-[#F97300] transition duration-300 w-full sm:w-auto"
+          >
+            {showResult ? "View Stats" : "View Result"}
+          </button>
+          <Link to="/">
+            <button
+              onClick={onRestart}
+              className="bg-[#F97300] text-[#E2DFD0] font-semibold px-6 py-2 rounded-lg hover:bg-[#E2DFD0] hover:text-[#F97300] hover:border-2 hover:border-[#F97300] transition duration-300 w-full sm:w-auto"
+            >
+              Restart
+            </button>
+          </Link>
+        </div>
       </div>
     </div>
   );
