@@ -10,8 +10,13 @@ const port = process.env.PORT || 3000;
 
 //APP level middlewares.
 app.use(morgan("tiny"));
+app.use(
+  cors({
+    origin: ["https://quiz-app-git-main-divyang0024s-projects.vercel.app"],
+    credentials: true,
+  })
+);
 app.use(express.json());
-app.use(cors());
 
 //routers
 app.use("/api", router);
