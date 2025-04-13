@@ -10,6 +10,7 @@ import axios from "axios";
 function SignUp() {
   const [formError, setFormError] = useState(false);
   const [isLogin, setIsLogin] = useState(false); // Toggle between signup and login
+  const [isLoading, setIsLoading] = useState(false); // State for loading
   const redirectToHome = useNavigate();
 
   const emailRegex =
@@ -35,8 +36,8 @@ function SignUp() {
 
   return (
     <>
-      <div className="flex justify-center items-center min-h-screen bg-[#32012F]">
-        <div className="bg-[#E2DFD0] p-8 rounded-xl border-2 border-[#F97300]">
+      <div className="flex justify-center items-center min-h-screen bg-[#32012F] p-4 sm:p-6 lg:p-8">
+        <div className="bg-[#E2DFD0] rounded-xl p-6 sm:p-8 shadow-lg border-2 border-[#F97300] w-full max-w-md mx-auto">
           <Formik
             initialValues={{
               name: "",
@@ -44,10 +45,11 @@ function SignUp() {
               email: "",
             }}
             validationSchema={formSchema}
-            onSubmit={async ({ name, password, email }) => {
-              if (isLogin) {
-                // Login mode
-                try {
+            onSubmit={async ({ name, password, email }, { setSubmitting }) => {
+              setIsLoading(true); // Start loading
+              try {
+                if (isLogin) {
+                  // Login mode
                   const res = await axios.post(
                     "https://quiz-app-98y5-git-main-divyang0024s-projects.vercel.app/user/verifyUser",
                     { email, password }
@@ -63,108 +65,137 @@ function SignUp() {
                     setFormError(true);
                     setTimeout(() => setFormError(false), 2000);
                   }
-                } catch (err) {
-                  console.log(err);
-                }
-              } else {
-                // Signup mode
-                const response = await axios.post(
-                  "https://quiz-app-98y5-git-main-divyang0024s-projects.vercel.app/user/getUsers",
-                  { email }
-                );
-                if (response.data.msg) {
-                  setFormError(true);
-                  setTimeout(() => setFormError(false), 2000);
                 } else {
-                  await axios
-                    .post(
-                      "https://quiz-app-98y5-git-main-divyang0024s-projects.vercel.app/user/registerUser",
-                      {
-                        name,
-                        email,
-                        password,
-                      }
-                    )
-                    .then(async (data) => {
-                      try {
+                  // Signup mode
+                  const response = await axios.post(
+                    "https://quiz-app-98y5-git-main-divyang0024s-projects.vercel.app/user/getUsers",
+                    { email }
+                  );
+                  if (response.data.msg) {
+                    setFormError(true);
+                    setTimeout(() => setFormError(false), 2000);
+                  } else {
+                    await axios
+                      .post(
+                        "https://quiz-app-98y5-git-main-divyang0024s-projects.vercel.app/user/registerUser",
+                        {
+                          name,
+                          email,
+                          password,
+                        }
+                      )
+                      .then(async (data) => {
                         const token = await generateToken({
                           name: data.data.name,
                           email: data.data.email,
                         });
                         Cookies.set("uid", token);
                         redirectToHome("/", { replace: true });
-                      } catch (err) {
-                        console.log(err);
-                      }
-                    });
+                      });
+                  }
                 }
+              } catch (err) {
+                console.error("Submission error:", err);
+                setFormError(true);
+                setTimeout(() => setFormError(false), 2000);
+              } finally {
+                setIsLoading(false); // Stop loading
+                setSubmitting(false); // Reset Formik submitting state
               }
             }}
           >
-            <Form className="flex flex-col gap-4">
-              <h1 className="text-[#F97300] font-semibold text-4xl mb-4 text-center">
-                {isLogin ? "Login" : "Signup"}
-              </h1>
+            {({ isSubmitting }) => (
+              <Form className="space-y-6">
+                <h1 className="text-[#F97300] font-bold text-3xl sm:text-4xl mb-6 text-center">
+                  {isLogin ? "Login" : "Signup"}
+                </h1>
 
-              {!isLogin && (
-                <>
-                  <ul className="flex flex-col md:flex-row gap-2 md:gap-20 md:justify-between md:items-center">
+                {!isLogin && (
+                  <div className="mb-4">
                     <label
                       htmlFor="myName"
-                      className="text-[#F97300] font-bold"
+                      className="block text-[#F97300] font-bold mb-2"
                     >
-                      Name :
+                      Name:
                     </label>
                     <Field
                       type="text"
                       name="name"
                       id="myName"
-                      className="text-[#F97300] p-1 rounded-lg border-2 border-[#F97300] bg-[#E2DFD0] placeholder-[#f974007a] focus:outline-none font-semibold text-center"
+                      className="w-full text-[#F97300] p-3 rounded-lg border-2 border-[#F97300] bg-[#E2DFD0] placeholder-[#f974007a] focus:outline-none font-semibold text-center"
                       placeholder="Enter Your Name"
                     />
-                  </ul>
-                  <RedErrorMessage name="name" />
-                </>
-              )}
+                    <RedErrorMessage name="name" />
+                  </div>
+                )}
 
-              <ul className="flex flex-col md:flex-row gap-2 md:justify-between md:items-center">
-                <label
-                  htmlFor="myPassword"
-                  className="text-[#F97300] font-bold"
+                <div className="mb-4">
+                  <label
+                    htmlFor="myPassword"
+                    className="block text-[#F97300] font-bold mb-2"
+                  >
+                    Password:
+                  </label>
+                  <Field
+                    type="password"
+                    name="password"
+                    id="myPassword"
+                    className="w-full text-[#F97300] p-3 rounded-lg border-2 border-[#F97300] bg-[#E2DFD0] placeholder-[#f974007a] focus:outline-none font-semibold text-center"
+                    placeholder="Enter Your Password"
+                  />
+                  <RedErrorMessage name="password" />
+                </div>
+
+                <div className="mb-4">
+                  <label
+                    htmlFor="myEmail"
+                    className="block text-[#F97300] font-bold mb-2"
+                  >
+                    Email:
+                  </label>
+                  <Field
+                    type="email"
+                    name="email"
+                    id="myEmail"
+                    className="w-full text-[#F97300] p-3 rounded-lg border-2 border-[#F97300] bg-[#E2DFD0] placeholder-[#f974007a] focus:outline-none font-semibold text-center"
+                    placeholder="Enter Your Email"
+                  />
+                  <RedErrorMessage name="email" />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-[#F97300] text-[#E2DFD0] font-semibold py-3 rounded-lg border-2 border-transparent hover:border-[#F97300] hover:bg-[#E2DFD0] hover:text-[#F97300] transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-base"
+                  disabled={isLoading || isSubmitting}
                 >
-                  Password :
-                </label>
-                <Field
-                  type="password"
-                  name="password"
-                  id="myPassword"
-                  className="text-[#F97300] p-1 rounded-lg border-2 border-[#F97300] bg-[#E2DFD0] placeholder-[#f974007a] focus:outline-none font-semibold text-center"
-                  placeholder="Enter Your Password"
-                />
-              </ul>
-              <RedErrorMessage name="password" />
-
-              <ul className="flex flex-col md:flex-row gap-2 md:justify-between md:items-center">
-                <label htmlFor="myEmail" className="text-[#F97300] font-bold">
-                  Email :
-                </label>
-                <Field
-                  type="email"
-                  name="email"
-                  id="myEmail"
-                  className="text-[#F97300] p-1 rounded-lg border-2 border-[#F97300] bg-[#E2DFD0] placeholder-[#f974007a] focus:outline-none font-semibold text-center"
-                  placeholder="Enter Your Email"
-                />
-              </ul>
-              <RedErrorMessage name="email" />
-
-              <button
-                type="submit"
-                className="bg-[#F97300] border-2 border-transparent font-semibold text-[#E2DFD0] px-4 py-2 rounded-lg hover:border-[#F97300] hover:bg-[#E2DFD0] hover:text-[#F97300] duration-300 self-end mt-4 md:self-auto"
-              >
-                {isLogin ? "Login" : "Signup"}
-              </button>
-            </Form>
+                  {isLoading ? "Processing..." : isLogin ? "Login" : "Signup"}
+                </button>
+                {isLoading && (
+                  <div className="w-full bg-[#F97300]/20 h-2 rounded-full overflow-hidden mt-2">
+                    <div
+                      className="bg-[#F97300] h-full animate-loading-bar rounded-full transition-all duration-1000 ease-in-out"
+                      style={{ width: "0%" }}
+                    >
+                      <style>
+                        {`
+                          @keyframes loading {
+                            from {
+                              width: 0%;
+                            }
+                            to {
+                              width: 100%;
+                            }
+                          }
+                          .animate-loading-bar {
+                            animation: loading 1s forwards;
+                          }
+                        `}
+                      </style>
+                    </div>
+                  </div>
+                )}
+              </Form>
+            )}
           </Formik>
 
           {formError && (
@@ -173,7 +204,7 @@ function SignUp() {
             </h1>
           )}
 
-          <div className="mt-4 text-center">
+          <div className="mt-6 text-center">
             <button
               onClick={() => setIsLogin(!isLogin)}
               className="text-sm font-semibold text-[#F97300] hover:underline"

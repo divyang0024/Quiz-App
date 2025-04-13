@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { moveNextQuestion, movePrevQuestion } from "../hooks/FetchQuestions";
 import { PushAnswer } from "../hooks/setAnswer";
-
-//component import
 import Questions from "./Questions";
 import { Navigate } from "react-router-dom";
 
@@ -17,6 +15,7 @@ function Quiz() {
   useEffect(() => {
     // console.log(result);
   });
+
   const onNext = () => {
     if (trace < queue.length) {
       dispatch(moveNextQuestion());
@@ -26,6 +25,7 @@ function Quiz() {
     }
     setChecked(undefined);
   };
+
   const onPrev = () => {
     if (trace > 0) dispatch(movePrevQuestion());
   };
@@ -40,41 +40,46 @@ function Quiz() {
 
   return (
     <>
-      <div className="flex justify-center items-center min-h-screen bg-[#32012F]">
-        <div className="flex">
-          <div className="flex p-8 bg-[#E2DFD0] rounded-xl flex-col gap-6 min-w-[30%] max-w-lg ">
-            <h1 className=" text-center text-[#F97300] text-4xl font-semibold">
+      <div className="flex justify-center items-center min-h-screen bg-[#32012F] p-4 sm:p-6 lg:p-8">
+        <div className="flex w-full max-w-2xl">
+          <div className="bg-[#E2DFD0] rounded-xl p-6 sm:p-8 shadow-lg border-2 border-[#F97300] w-full">
+            <h1 className="text-center text-[#F97300] text-3xl sm:text-4xl font-bold mb-6">
               Quiz Application
             </h1>
-            <Questions onChecked={onChecked} />
-            <div className="flex justify-between mt-2 gap-x-4 flex-auto">
-              {trace > 0 ? (
-                <button
-                  className="bg-[#F97300] border-2 border-transparent font-semibold text-[#E2DFD0] px-16 py-2 rounded-lg self-center hover:border-[#F97300] hover:bg-[#E2DFD0] hover:text-[#F97300] duration-300"
-                  onClick={onPrev}
-                >
-                  Prev
-                </button>
-              ) : (
-                <button className=" bg-transparent border-2 border-transparent font-semibold text-transparent px-16 py-2 rounded-lg self-center hover:cursor-default">
-                  Prev
-                </button>
-              )}
-              {trace == queue.length - 1 ? (
-                <button
-                  className="bg-[#32012F] border-2 border-transparent font-semibold text-[#E2DFD0] px-16 py-2 rounded-lg self-center hover:border-[#32012F] hover:bg-[#E2DFD0] hover:text-[#32012F] duration-300"
-                  onClick={onNext}
-                >
-                  Submit
-                </button>
-              ) : (
-                <button
-                  className="bg-[#F97300] border-2 border-transparent font-semibold text-[#E2DFD0] px-16 py-2 rounded-lg self-center hover:border-[#F97300] hover:bg-[#E2DFD0] hover:text-[#F97300] duration-300"
-                  onClick={onNext}
-                >
-                  Next
-                </button>
-              )}
+            <div className="space-y-6">
+              <Questions onChecked={onChecked} />
+              <div className="flex justify-between gap-4">
+                {trace > 0 ? (
+                  <button
+                    className="w-1/2 bg-[#F97300] text-[#E2DFD0] font-semibold py-3 rounded-lg border-2 border-transparent hover:border-[#F97300] hover:bg-[#E2DFD0] hover:text-[#F97300] transition duration-300"
+                    onClick={onPrev}
+                  >
+                    Prev
+                  </button>
+                ) : (
+                  <button
+                    className="w-1/2 bg-transparent border-2 border-transparent text-transparent py-3 rounded-lg cursor-default"
+                    disabled
+                  >
+                    Prev
+                  </button>
+                )}
+                {trace === queue.length - 1 ? (
+                  <button
+                    className="w-1/2 bg-[#32012F] text-[#E2DFD0] font-semibold py-3 rounded-lg border-2 border-transparent hover:border-[#32012F] hover:bg-[#E2DFD0] hover:text-[#32012F] transition duration-300"
+                    onClick={onNext}
+                  >
+                    Submit
+                  </button>
+                ) : (
+                  <button
+                    className="w-1/2 bg-[#F97300] text-[#E2DFD0] font-semibold py-3 rounded-lg border-2 border-transparent hover:border-[#F97300] hover:bg-[#E2DFD0] hover:text-[#F97300] transition duration-300"
+                    onClick={onNext}
+                  >
+                    Next
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
