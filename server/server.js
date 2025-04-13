@@ -12,7 +12,10 @@ const port = process.env.PORT || 3000;
 app.use(morgan("tiny"));
 app.use(
   cors({
-    origin: ["https://quiz-app-git-main-divyang0024s-projects.vercel.app"],
+    origin: [
+      "https://quiz-app-git-main-divyang0024s-projects.vercel.app",
+      "https://quiz-app-sigma-ashy.vercel.app",
+    ],
     credentials: true,
   })
 );
