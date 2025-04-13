@@ -15,7 +15,7 @@ app.use(
     origin: [
       "https://quiz-app-git-main-divyang0024s-projects.vercel.app",
       "https://quiz-app-sigma-ashy.vercel.app",
-      "https://localhost:5173",
+      "http://localhost:5173",
     ],
     credentials: true,
   })
